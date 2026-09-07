@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: supplysense-postgres
+    restart: unless-stopped
+    environment:
+      # Local dev only - matches the defaults in Backend/src/main/resources/application.yml.
+      # Never reuse these values for staging/production; those get real
+      # secrets injected via environment variables / a secret manager.
+      POSTGRES_DB: supplysense
+      POSTGRES_USER: supplysense
+      POSTGRES_PASSWORD: supplysense
+    ports:
+      - "5432:5432"
+    volumes:
+      - supplysense_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U supplysense"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  supplysense_pgdata:
+
+# NOTE (M0 scope): only Postgres is containerized right now. The backend
+# runs directly from IntelliJ/Maven during local development for the
+# fastest inner dev loop. We containerize the backend itself starting
+# around M6/CI-CD setup, once there's a real app worth shipping as an
+# image - not before, per "don't add infrastructure before it's justified."

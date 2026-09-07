@@ -1,0 +1,37 @@
+# ---- Backend (Maven / Java) ----
+Backend/target/
+*.class
+*.jar
+!*.pom.xml
+
+# ---- Frontend (Node) ----
+Frontend/node_modules/
+Frontend/dist/
+Frontend/build/
+Frontend/.env
+Frontend/.env.local
+
+# ---- ML service (Python) ----
+ml-service/__pycache__/
+ml-service/*.pyc
+ml-service/.venv/
+ml-service/venv/
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Secrets - never commit these ----
+.env
+*.pem
+*.key
+application-local.yml
+application-secrets.yml
+
+# ---- Docker ----
+# (named volumes are managed by Docker itself, not tracked here)
