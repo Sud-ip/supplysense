@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,15 +20,20 @@ import java.util.UUID;
 
 /**
  * Runs once per request. Validates the Bearer token (if present), and on
- * success populates both:
+ * success populates THREE things:
  *  - Spring Security's context (so @PreAuthorize / hasRole checks work)
- *  - TenantContext (so repository-level tenant filtering works from M2 on)
+ *  - TenantContext (so repository-level tenant filtering works)
+ *  - MDC (so every structured log line for this request carries
+ *    tenantId/userId, added in M6 - see logback-spring.xml)
  *
  * Requests with no/invalid token simply proceed unauthenticated - it's
  * SecurityConfig's job to decide which endpoints require authentication.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final String TENANT_ID_MDC_KEY = "tenantId";
+    private static final String USER_ID_MDC_KEY = "userId";
 
     private final JwtService jwtService;
 
@@ -57,21 +63,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String role = jwtService.extractRole(claims);
 
                     TenantContext.set(new TenantContext.AuthenticatedPrincipal(userId, tenantId, email, role));
+                    MDC.put(TENANT_ID_MDC_KEY, tenantId.toString());
+                    MDC.put(USER_ID_MDC_KEY, userId.toString());
 
                     var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
                     var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-                // A refresh token presented as a Bearer access token is
-                // silently ignored here - it simply won't authenticate,
-                // which is the correct behavior (refresh tokens are only
-                // valid at POST /api/v1/auth/refresh).
 
             } catch (JwtException | IllegalArgumentException ex) {
-                // Invalid/expired token: leave unauthenticated, let
-                // SecurityConfig's entry point return 401 for protected
-                // routes. We don't throw here - that's this filter's job
-                // only for validation, not for deciding access.
                 SecurityContextHolder.clearContext();
             }
         }
@@ -80,6 +80,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             TenantContext.clear();
+            MDC.remove(TENANT_ID_MDC_KEY);
+            MDC.remove(USER_ID_MDC_KEY);
         }
     }
 }

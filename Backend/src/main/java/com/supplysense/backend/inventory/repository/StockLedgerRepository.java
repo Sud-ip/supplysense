@@ -5,18 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Extends the bare Spring Data {@code Repository<T, ID>} marker interface,
- * NOT JpaRepository or CrudRepository. This means the only operations
- * available on stock ledger entries are the ones explicitly declared
- * below - there is no update(), no delete(), no deleteById() available
- * anywhere in this codebase for ledger entries. Combined with
- * StockLedgerEntry having no setters, this makes "the ledger is
- * append-only" a structural guarantee, not a code-review convention.
- */
 public interface StockLedgerRepository extends Repository<StockLedgerEntry, UUID> {
 
     StockLedgerEntry save(StockLedgerEntry entry);
@@ -27,4 +20,8 @@ public interface StockLedgerRepository extends Repository<StockLedgerEntry, UUID
             UUID tenantId, UUID productId, UUID locationId, Pageable pageable);
 
     Page<StockLedgerEntry> findAllByTenantIdOrderByCreatedAtDesc(UUID tenantId, Pageable pageable);
+
+    // Added in M6: dashboard trends need the raw entries within a window
+    // to group by day in application code (see DashboardService).
+    List<StockLedgerEntry> findAllByTenantIdAndCreatedAtAfter(UUID tenantId, Instant since);
 }

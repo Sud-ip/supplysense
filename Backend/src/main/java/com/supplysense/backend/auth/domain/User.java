@@ -55,6 +55,14 @@ public class User {
         this.createdAt = Instant.now();
     }
 
+    // Added along with UserService.deactivateUser: OWNER can deactivate
+    // a MANAGER/STAFF account (e.g. an employee leaving). Same pattern
+    // as TenantOwnedEntity elsewhere - a single controlled method, not
+    // an open setActive(boolean) setter.
+    public void deactivate() {
+        this.active = false;
+    }
+
     public UUID getId() {
         return id;
     }

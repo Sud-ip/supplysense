@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+        Two profiles, two formats:
+
+        - "local" (what you run day-to-day in IntelliJ): plain, colored,
+          human-readable console output. JSON is objectively worse to
+          read while you're actively developing.
+
+        - everything else (default - matches what a real deployment runs
+          with, e.g. "docker"/"prod"): structured JSON, one object per
+          line, via logstash-logback-encoder. This is what a real log
+          aggregation tool (anything ingesting stdout from a container)
+          expects - queryable fields instead of a text blob to regex
+          against.
+
+        Run with -Dspring.profiles.active=local (or set it in your
+        IntelliJ run configuration) to get the readable format locally.
+        No profile set -> JSON, matching production behavior by default.
+    -->
+
+    <springProfile name="local">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan(%logger{36}) - %msg%n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <springProfile name="!local">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeMdcKeyName>tenantId</includeMdcKeyName>
+                <includeMdcKeyName>userId</includeMdcKeyName>
+                <includeMdcKeyName>traceId</includeMdcKeyName>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Quiet down noisy framework debug logging at INFO level; app code
+         defaults to INFO via root above and can be raised per-package
+         later if a specific area needs more detail while debugging. -->
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.springframework.web" level="INFO"/>
+
+</configuration>
