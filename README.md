@@ -1,6 +1,6 @@
 # SupplySense — Architecture & Planning Document (v1)
 
-Status: **Planning only. No implementation started.**
+Status: **implemented.**
 
 ---
 
@@ -319,13 +319,5 @@ Work proceeds **milestone by milestone**, each requiring explicit approval befor
 
 ---
 
-## Open Questions for Project Owner
+Thank You. !!
 
-1. Should `STAFF` role be allowed to record sales but not view cost/margin data (unit_cost)? This affects DTO field-level visibility per role.
-2. CSV import — do we need a defined column-mapping template now, or should the importer support flexible column mapping in MVP?
-3. Should soft-deleted products still appear in historical ledger/dashboard queries (they should, for integrity) — confirming this is expected, not a bug, before we build it.
-4. Any existing brand/design constraints for the frontend, or is Tailwind's default palette a fine starting point?
-
----
-
-*This document is the baseline for implementation. Nothing beyond M0 begins without explicit sign-off.*
