@@ -4,13 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#12181F',
-        paper: '#F6F7F9',
-        line: '#E2E5E9',
+        ink: '#172033',
+        paper: '#F5F7FB',
+        line: '#E4E9F2',
         brand: {
-          DEFAULT: '#0F6E5E',
-          dark: '#0B5548',
-          soft: '#E4F2EE'
+          DEFAULT: '#536DFE',
+          dark: '#3D52D5',
+          soft: '#EEF0FF'
         },
         success: {
           DEFAULT: '#1C8A5B',
@@ -31,7 +31,7 @@ export default {
         mono: ['"IBM Plex Mono"', 'monospace']
       },
       borderRadius: {
-        DEFAULT: '4px'
+        DEFAULT: '12px'
       }
     }
   },

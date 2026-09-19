@@ -1,4 +1,9 @@
 spring:
+  config:
+    # Local developer convenience: load the repository-root .env (a valid properties file) when present.
+    # Environment variables still take precedence in deployed environments.
+    import: optional:file:../.env[.properties]
+
   application:
     name: supplysense-backend
 

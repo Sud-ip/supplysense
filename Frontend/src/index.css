@@ -4,6 +4,7 @@
 
 body {
   @apply bg-paper text-ink font-sans antialiased;
+  background-image: radial-gradient(circle at 75% -10%, rgba(83, 109, 254, .12), transparent 28rem);
 }
 
 /* Every numeric/code cell (SKU, quantity, price, date, ID) uses this -
@@ -17,7 +18,7 @@ body {
 /* Visible keyboard focus everywhere, not just default browser outline -
    quality floor, not optional. */
 :focus-visible {
-  outline: 2px solid #0F6E5E;
+  outline: 2px solid #536DFE;
   outline-offset: 2px;
 }
 
@@ -26,4 +27,22 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+button, input, select { font: inherit; }
+
+@layer components {
+  .page-title { @apply font-display text-3xl font-semibold tracking-tight text-ink; }
+  .page-subtitle { @apply mt-2 text-sm leading-6 text-ink/55; }
+  .surface { @apply rounded-2xl border border-line bg-white shadow-xl shadow-slate-200/50; }
+  .btn-primary { @apply inline-flex items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-dark hover:shadow-xl shadow-slate-200/50 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50; }
+  .btn-secondary { @apply inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink/70 transition hover:border-brand/30 hover:text-brand focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2; }
+  .field { @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-ink/35 focus:border-brand focus:ring-4 focus:ring-brand/10; }
+  .table-wrap { @apply surface overflow-x-auto; }
+  .data-table { @apply w-full min-w-[620px] text-sm; }
+  .data-table thead { @apply bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-ink/45; }
+  .data-table th { @apply px-5 py-3.5; }
+  .data-table td { @apply px-5 py-3.5; }
+  .data-table tbody tr { @apply border-t border-line/80 transition hover:bg-brand-soft/35; }
+  .badge { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold; }
 }
