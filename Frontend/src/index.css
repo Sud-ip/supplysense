@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+}
+
+/* Every numeric/code cell (SKU, quantity, price, date, ID) uses this -
+   a ledger reads as trustworthy partly because its numbers line up.
+   This is a content-driven choice, not decoration: only used where the
+   content actually is a number or code. */
+.data {
+  @apply font-mono tabular-nums;
+}
+
+/* Visible keyboard focus everywhere, not just default browser outline -
+   quality floor, not optional. */
+:focus-visible {
+  outline: 2px solid #0F6E5E;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
