@@ -1,6 +1,6 @@
 spring:
   application:
-    name: supplysense
+    name: supplysense-backend
 
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:supplysense}
@@ -20,6 +20,11 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 server:
   port: 8080
 
@@ -27,17 +32,22 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        # M6: added metrics + prometheus. health/info stay public (see
+        # SecurityConfig); prometheus is also public here at the
+        # application layer but should be network-restricted (firewall/
+        # security group) in any real deployment - not exposed to the
+        # public internet even though the app itself doesn't gate it
+        # with a JWT (a metrics scraper isn't an application user).
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: when-authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 app:
   jwt:
-    # Local-dev-only default. MUST be overridden via the JWT_SECRET env var
-    # in any shared/staging/production environment - never edit this value
-    # for a real deployment (principle #12: never hardcode secrets).
-    # Must be >= 256 bits (32+ chars) for HS256.
     secret: ${JWT_SECRET}
-    access-token-expiration-minutes: ${JWT_ACCESS_EXPIRATION_MINUTES:15}
+    access-token-expiration-minutes: ${JWT_ACCESS_EXPIRATION_MINUTES:60}
     refresh-token-expiration-days: ${JWT_REFRESH_EXPIRATION_DAYS:7}

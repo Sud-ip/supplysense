@@ -35,6 +35,7 @@ public class ProductService {
         this.tenantRepository = tenantRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> findAll() {
         UUID tenantId = TenantContext.currentTenantId();
         boolean includeCost = canSeeCost();
@@ -43,7 +44,9 @@ public class ProductService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ProductResponse findById(UUID id) {
+
         return ProductResponse.from(getOwnedOrThrow(id), canSeeCost());
     }
 
