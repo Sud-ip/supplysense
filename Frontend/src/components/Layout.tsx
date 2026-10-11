@@ -9,7 +9,7 @@ const navItems = [
   { to: '/suppliers', label: 'Suppliers', icon: '◇' },
   { to: '/locations', label: 'Locations', icon: '⌖' },
   { to: '/inventory', label: 'Inventory', icon: '▣' },
-  { to: '/inventory/thresholds', label: 'Reorder points', icon: '◎' },
+  { to: '/inventory/thresholds', label: 'Reorder Threshold', icon: '◎' },
   { to: '/sales/new', label: 'Record sale', icon: '↗' },
   { to: '/sales/import', label: 'Import CSV', icon: '⇧' }
 ]

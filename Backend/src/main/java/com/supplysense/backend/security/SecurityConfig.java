@@ -20,15 +20,21 @@ import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties({JwtProperties.class, CorsProperties.class})
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TraceIdFilter traceIdFilter;
+    private final CorsProperties corsProperties;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, TraceIdFilter traceIdFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            TraceIdFilter traceIdFilter,
+            CorsProperties corsProperties
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.traceIdFilter = traceIdFilter;
+        this.corsProperties = corsProperties;
     }
 
     @Bean
@@ -37,18 +43,14 @@ public class SecurityConfig {
     }
 
     /**
-     * without this, the browser itself blocks every request from
-     * the React dev server (localhost:5173) to this API
-     * (localhost:8080) before it even reaches our JWT/authorization
-     * logic - this is a browser-enforced same-origin restriction, not
-     * something Spring Security decides. Origins are hardcoded to local
-     * dev ports here; a real deployment would read the frontend's actual
-     * domain from an environment variable instead.
+     * Origins now come from app.cors.allowed-origins (see application.yml),
+     * driven by the CORS_ALLOWED_ORIGINS env var in real deployments -
+     * not hardcoded to the local dev port anymore.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(corsProperties.allowedOrigins());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
